@@ -4,8 +4,8 @@ This it the github repository from the [Chaudron Project](http://w3id.org/chaudr
 
 You'll find here the following resources :
 * [Issue Tracker](https://github.com/jsubercaze/chaudron/issues|Issue tracker)
-* Dataset
-* Grammar
-* Unit lists
+* [Dataset](https://github.com/jsubercaze/chaudron/tree/master/data)
+* [Grammar](https://github.com/jsubercaze/chaudron/tree/master/units)
+* [Unit lists](https://github.com/jsubercaze/chaudron/tree/master/units)
 
 
