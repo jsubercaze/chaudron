@@ -1,0 +1,58 @@
+PARSER_BEGIN(UnitsChecker)
+package org.jsubercaze.infoboxparser.utils.syntaxchecker;
+
+public class UnitsChecker {
+   public static void main(String[] args) {
+        try {
+            new UnitsChecker(new java.io.StringReader(args[0])).S();
+            System.out.println("Syntax is okay");
+        } catch (Throwable e) {
+            // Catching Throwable is ugly but JavaCC throws Error objects!
+            System.out.println("Syntax check failed: " + e.getMessage());
+        }
+    }
+    
+    public static boolean isUnit(String s){
+    	try {
+            new UnitsChecker(new java.io.StringReader(s)).S();
+ 			return true;
+        } catch (Throwable e) {
+                	e.printStackTrace();
+           return false;
+        }
+       
+    }
+}
+
+PARSER_END(UnitsChecker) 
+
+SKIP:  { " " | "\t" | "\n" | "\r"}
+TOKEN: { "(" | ")" | "*" 
+| <OPERATOR: ["/","."]> 
+//\u03A9 Omega for Ohm
+| <TOKEN_a : "a">
+| <TOKEN_d : "d">
+| <TOKEN_m : "m">
+| <TOKEN_y : "y">
+| <UNIT_P : "P">
+| <UNIT_z : "z">
+| <UNIT_C : "C">
+| <UNIT_TERMINAL : ["A","C","F","K","\u03A9","N","V","T","J","g","L"]> 
+//\u03BC mu 
+| <PREFIX_TERMINAL: ["Y","Z","E","P","T","G","M","h","k","c","m","\u03BC","n","p","f","a","z","y"]>
+| < POWER: ["0"-"9"]>
+}
+//General form of the expression
+void S(): {} { E() <EOF>           }
+void E(): {} {   T() ((<OPERATOR>)? T())*}
+void T(): {} {LOOKAHEAD(2)   (P())? U() ("*"("-")? <POWER>)? | "(" E() ")" } 
+
+//Units
+void U(): {} {LOOKAHEAD(2)  <UNIT_TERMINAL> | "B" "q" | U1() | <UNIT_P> <TOKEN_a> | U2() | "°" "C" | U3()  | "r" <TOKEN_a> <TOKEN_d> | U4()}
+ 
+void U1() : {} { LOOKAHEAD(2) "H" "z" | "H"}
+void U2() : {} {LOOKAHEAD(2) "W" "b" |"W" }
+void U3() : {} {LOOKAHEAD(2) <TOKEN_m> "o" "l" |<TOKEN_m> }
+void U4() : {} {LOOKAHEAD(2)  "s" "r" | "s"}
+//Prefixes
+void P(): {} { <PREFIX_TERMINAL> | <TOKEN_d> (<TOKEN_a>)?}
